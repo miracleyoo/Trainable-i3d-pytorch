@@ -1,5 +1,121 @@
-I3D models transfered from Tensorflow to PyTorch
-================================================
+Re-trainable I3D models transferred from TensorFlow to PyTorch
+==============================================================
+
+This repo is a superset of [hassony2](https://github.com/hassony2)/[kinetics_i3d_pytorch](https://github.com/hassony2/kinetics_i3d_pytorch). And it is built for transfer learning on your own dataset.
+
+This repo make it possible to build your own dataset (i.e. rgb.npy & flow.npy) for every video or every continuous images folder you provide in a neat and regular way. Also, the generated dataset can directly been put into train process.
+
+You can run `python3 pre-process.py --help` to get help on how to generate your own dataset.
+
+The `train.py` file is the main file when you want to retrain i3d. It will load the original pre-trained model on kinetics which is directly transferred from the TensorFlow model in the [original official repo](https://github.com/deepmind/kinetics-i3d/).
+
+Then, `train.py` will freeze the first 15 layer block(20 in total), and then load your own dataset to preform re-train.
+
+The data structure of the `data` folder is like this:
+
+```
+.
+├── classes.txt
+├── images // If you use image series instead of video as raw input
+│   ├── pre-processed
+│   │   ├── idle
+│   │   │   └── Series4
+│   │   │       ├── test_flow.npy
+│   │   │       └── test_rgb.npy
+│   │   ├── mix
+│   │   │   └── Series3
+│   │   │       ├── test_flow.npy
+│   │   │       └── test_rgb.npy
+│   │   ├── put-in
+│   │   │   └── Series2
+│   │   │       ├── test_flow.npy
+│   │   │       └── test_rgb.npy
+│   │   └── take-out
+│   │       └── Series1
+│   │           ├── test_flow.npy
+│   │           └── test_rgb.npy
+│   └── raw
+│       ├── idle
+│       │   └── Series4
+│       │       ├── pic1.png
+│       │       ├── pic2.jpg
+│       │       ├── pic3.jpg
+│       │       └── pic4.jpg
+│       ├── mix
+│       │   └── Series3
+│       │       ├── pic1.png
+│       │       ├── pic2.jpg
+│       │       ├── pic3.jpg
+│       │       └── pic4.jpg
+│       ├── put-in
+│       │   └── Series2
+│       │       ├── pic1.png
+│       │       ├── pic2.jpg
+│       │       ├── pic3.jpg
+│       │       └── pic4.jpg
+│       └── take-out
+│           └── Series1
+│               ├── pic1.png
+│               ├── pic2.jpg
+│               ├── pic3.jpg
+│               └── pic4.jpg
+└── videos // If you use video as raw input
+    ├── pre-processed
+    │   ├── train
+    │   │   ├── idle
+    │   │   │   └── IMG_6804
+    │   │   │       ├── flow-SampleRate_1.npy
+    │   │   │       └── rgb-SampleRate_1.npy
+    │   │   ├── mix
+    │   │   │   └── IMG_6803
+    │   │   │       ├── flow-SampleRate_1.npy
+    │   │   │       └── rgb-SampleRate_1.npy
+    │   │   ├── put-in
+    │   │   │   └── IMG_6802
+    │   │   │       ├── flow-SampleRate_1.npy
+    │   │   │       └── rgb-SampleRate_1.npy
+    │   │   └── take-out
+    │   │       └── IMG_6801
+    │   │           ├── flow-SampleRate_1.npy
+    │   │           └── rgb-SampleRate_1.npy
+    │   └── val
+    │       ├── idle
+    │       │   └── IMG_6805
+    │       │       ├── flow-SampleRate_1.npy
+    │       │       └── rgb-SampleRate_1.npy
+    │       ├── mix
+    │       │   └── IMG_6806
+    │       │       ├── flow-SampleRate_1.npy
+    │       │       └── rgb-SampleRate_1.npy
+    │       ├── put-in
+    │       │   └── IMG_6807
+    │       │       ├── flow-SampleRate_1.npy
+    │       │       └── rgb-SampleRate_1.npy
+    │       └── take-out
+    │           └── IMG_6808
+    │               ├── flow-SampleRate_1.npy
+    │               └── rgb-SampleRate_1.npy
+    └── raw
+        ├── idle
+        │   ├── IMG_6804.mp4
+        │   ├── IMG_7804.mp4
+        │   └── ...
+        ├── mix
+        │   ├── IMG_6803.mp4
+        │   ├── IMG_7803.mp4
+        │   └── ...
+        ├── put-in
+        │   ├── IMG_6802.mp4
+        │   ├── IMG_7802.mp4
+        │   └── ...
+        └── take-out
+            ├── IMG_6801.mp4
+            ├── IMG_7801.mp4
+            └── ...
+```
+
+
+# The following content is from the original Repo "I3D models transfered from Tensorflow to PyTorch"
 
 This repo contains several scripts that allow to transfer the weights from the tensorflow implementation of I3D
 from the paper [*Quo Vadis, Action Recognition? A New Model and the Kinetics Dataset*](https://arxiv.org/abs/1705.07750) by Joao Carreira and Andrew Zisserman to PyTorch.
