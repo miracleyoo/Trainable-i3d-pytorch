@@ -1,0 +1,4 @@
+take-out
+put-in
+idle
+mix
