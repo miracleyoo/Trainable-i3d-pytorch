@@ -15,12 +15,6 @@ from src.i3dpt import I3D
 from DataLoader import RGBFlowDataset
 
 
-def cuda_adapter(data):
-    if torch.cuda.is_available():
-        data.cuda()
-    return data
-
-
 def train_model(rgb_model, flow_model, criterion, optimizers, schedulers, num_epochs=25):
     since = time.time()
 

@@ -31,11 +31,13 @@ def build_data_path(is_image=False):
         data_root = Path("data/videos/")
     raw_path = data_root / "raw"
     train_path = data_root / "pre-processed"
-    train_path.mkdir()
+    if not train_path.exists(): train_path.mkdir()
     first_parts = ["train", "val"]
     class_parts = [i.stem for i in raw_path.iterdir() if not i.stem.startswith(".") and i.is_dir()]
     for first_part in first_parts:
-        (train_path/first_part).mkdir()
+        temp = train_path/first_part
+        if not temp.exists(): temp.mkdir()
         for class_part in class_parts:
             # print(str(train_path/first_part/class_part))
-            (train_path / first_part / class_part).mkdir()
+            temp = train_path / first_part / class_part
+            if not temp.exists(): temp.mkdir()

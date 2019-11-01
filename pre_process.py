@@ -54,9 +54,17 @@ class FrameGenerator(object):
         return frame
 
 
-def compute_rgb(video_path, sample_rate=1):
+def compute_rgb(video_path, sample_rate=1, out_path=None):
     """Compute RGB"""
     rgb = []
+    if out_path is None:
+        out_path = Path(*video_path.parts[:-3], "pre-processed", "train",
+                        video_path.parts[-2], video_path.stem)
+        if not out_path.exists(): out_path.mkdir()
+    else:
+        out_path = Path(out_path)
+    out_path = out_path / ('rgb-SampleRate_{}.npy'.format(sample_rate))
+
     video_object = FrameGenerator(video_path, sample_rate)
     for i in range(len(video_object)):
         frame = video_object.get_frame()
@@ -64,19 +72,23 @@ def compute_rgb(video_path, sample_rate=1):
         rgb.append(frame)
     video_object.release()
     rgb = rgb[:-1]
-    rgb = np.array(rgb)# [np.newaxis, :]
+    rgb = np.float32(np.array(rgb))
     log('save rgb with shape ', rgb.shape)
-    out_path = Path(*video_path.parts[:-3], "pre-processed", "train",
-                    video_path.parts[-2], video_path.stem)
-    if not out_path.exists(): out_path.mkdir()
-    out_path = out_path / ('rgb-SampleRate_{}.npy'.format(sample_rate))
     np.save(out_path, rgb)
     return rgb
 
 
-def compute_flow(video_path, sample_rate=1):
+def compute_flow(video_path, sample_rate=1, out_path=None):
     """Compute the TV-L1 optical flow."""
     flow = []
+    if out_path is None:
+        out_path = Path(*video_path.parts[:-3], "pre-processed", "train",
+                        video_path.parts[-2], video_path.stem)
+        if not out_path.exists(): out_path.mkdir()
+    else:
+        out_path = Path(out_path)
+    out_path = out_path / ('flow-SampleRate_{}.npy'.format(sample_rate))
+
     bins = np.linspace(-20, 20, num=256)
     TVL1 = cv2.optflow.DualTVL1OpticalFlow_create()
     video_object = FrameGenerator(video_path, sample_rate)
@@ -102,27 +114,25 @@ def compute_flow(video_path, sample_rate=1):
         prev = curr
 
     video_object.release()
-    flow = np.array(flow)# [np.newaxis, :]
+    flow = np.float32(np.array(flow))
     log('Save flow with shape ', flow.shape)
-    out_path = Path(*video_path.parts[:-3], "pre-processed", "train",
-                    video_path.parts[-2], video_path.stem)
-    if not out_path.exists(): out_path.mkdir()
-    out_path = out_path / ('flow-SampleRate_{}.npy'.format(sample_rate))
+
     np.save(out_path, flow)
     return flow
 
 
-def pre_process(video_path, sample_rate=1):
+def pre_process(video_path, sample_rate=1, out_path=None):
     video_path = Path(video_path)
     with Timer('Compute RGB'):
         log('Extract RGB...')
-        compute_rgb(video_path, sample_rate)
+        rgb_data = compute_rgb(video_path, sample_rate, out_path)
         # DATA_DIR / 'v_CricketShot_g04_c01.avi')
 
     with Timer('Compute flow'):
         log('Extract Flow...')
-        compute_flow(video_path, sample_rate)
+        flow_data = compute_flow(video_path, sample_rate, out_path)
         # DATA_DIR / 'v_CricketShot_g04_c01.avi')
+    return rgb_data, flow_data
 
 
 def mass_process(is_image=False, sample_rate=1):
@@ -130,7 +140,7 @@ def mass_process(is_image=False, sample_rate=1):
         data_root = Path("data/images/")
     else:
         data_root = Path("data/videos/")
-    raw_path = data_root/"raw"
+    raw_path = data_root / "raw"
     class_paths = [i for i in raw_path.iterdir() if not i.stem.startswith(".") and i.is_dir()]
     item_paths = []
     for class_path in class_paths:

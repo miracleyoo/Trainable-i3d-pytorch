@@ -7,11 +7,13 @@ parser = argparse.ArgumentParser('Runs inflated inception v1 network on\
 # RGB arguments
 parser.add_argument(
     '--rgb', action='store_true', help='Evaluate RGB pretrained network')
+
 parser.add_argument(
     '--rgb_weights_path',
     type=str,
     default='model/model_rgb.pth',
     help='Path to rgb model state_dict')
+
 parser.add_argument(
     '--rgb_sample_path',
     type=str,
@@ -37,8 +39,20 @@ parser.add_argument(
     type=str,
     default='data/classes.txt',
     help='Path of the file containing classes names')
+
+parser.add_argument(
+    '--sample_path',
+    type=str,
+    help='Path of the sample video or image set you want to use to predict.')
+
+parser.add_argument(
+    '--sample_rate',
+    type=int,
+    default='1',
+    help='Sample rate, or 1/sample_rate frames will be chosen.')
+
 parser.add_argument(
     '--top_k',
     type=int,
-    default='5',
+    default='3',
     help='When display_samples, number of top classes to display')
