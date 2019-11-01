@@ -1,5 +1,7 @@
 import time
 
+from pathlib2 import Path
+
 
 class Timer(object):
     def __init__(self, name=None):
@@ -21,3 +23,19 @@ def log(*snippets, end=None):
         print(time.strftime("==> [%Y-%m-%d %H:%M:%S]", time.localtime()) + " " + "".join([str(s) for s in snippets]),
               end=end)
 
+
+def build_data_path(is_image=False):
+    if is_image:
+        data_root = Path("data/images/")
+    else:
+        data_root = Path("data/videos/")
+    raw_path = data_root / "raw"
+    train_path = data_root / "pre-processed"
+    train_path.mkdir()
+    first_parts = ["train", "val"]
+    class_parts = [i.stem for i in raw_path.iterdir() if not i.stem.startswith(".") and i.is_dir()]
+    for first_part in first_parts:
+        (train_path/first_part).mkdir()
+        for class_part in class_parts:
+            # print(str(train_path/first_part/class_part))
+            (train_path / first_part / class_part).mkdir()

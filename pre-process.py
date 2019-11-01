@@ -125,6 +125,27 @@ def pre_process(video_path, sample_rate=1):
         # DATA_DIR / 'v_CricketShot_g04_c01.avi')
 
 
+def mass_process(is_image=False, sample_rate=1):
+    if is_image:
+        data_root = Path("data/images/")
+    else:
+        data_root = Path("data/videos/")
+    raw_path = data_root/"raw"
+    class_paths = [i for i in raw_path.iterdir() if not i.stem.startswith(".") and i.is_dir()]
+    item_paths = []
+    for class_path in class_paths:
+        if is_image:
+            item_paths.extend([i for i in class_path.iterdir()
+                               if not i.stem.startswith(".") and i.is_dir()])
+        else:
+            item_paths.extend([i for i in class_path.iterdir()
+                               if not i.stem.startswith(".") and i.is_file() and i.suffix in _VIDEO_EXT])
+    for item_path in item_paths:
+        with Timer(item_path.name):
+            log("Now start processing:", str(item_path), "Sample rate:", sample_rate)
+            pre_process(item_path, sample_rate=sample_rate)
+
+
 def main(video_path, sample_rate):
     pre_process(video_path, sample_rate=sample_rate)
 
@@ -135,6 +156,10 @@ if __name__ == '__main__':
     # RGB arguments
     parser.add_argument('--use_image', action='store_true',
                         help='Use a series of image(its folder) as video input')
+    parser.add_argument('--mass', action='store_true',
+                        help='Compute RGBs and Flows massively.')
+    parser.add_argument('--init_dir', action='store_true',
+                        help='Initialize the data pre-processed folder tree.')
     parser.add_argument(
         '--input_path',
         type=str,
@@ -152,9 +177,9 @@ if __name__ == '__main__':
         DATA_ROOT = Path('data/videos/')
     DATA_DIR = DATA_ROOT / 'raw'
     SAVE_DIR = DATA_ROOT / 'pre-processed'
-    #### TESTING
-    # args.input_path='data/images/raw/take-out/test'
-    # Path(video_path.parts[:-3],"pre-processed",video_path[-2:])
-    # SAVE_DIR = Path('data/images/pre-processed')
-
-    main(args.input_path, args.sample_rate)
+    if args.init_dir:
+        build_data_path(args.use_image)
+    if args.mass:
+        mass_process(args.use_image, args.sample_rate)
+    else:
+        main(args.input_path, args.sample_rate)
