@@ -139,7 +139,7 @@ if __name__ == "__main__":
     data_dir = Path('data/videos/pre-processed')
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    rgb_flow_datasets = {x: RGBFlowDataset(data_dir / x, class_dicts, sample_rate=1)
+    rgb_flow_datasets = {x: RGBFlowDataset(data_dir / x, class_dicts, sample_rate=args.sample_rate)
                          for x in ['train', 'val']}
     data_loaders = {x: torch.utils.data.DataLoader(rgb_flow_datasets[x], batch_size=1,
                                                    shuffle=True, num_workers=0)

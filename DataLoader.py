@@ -20,10 +20,14 @@ class RGBFlowDataset(Dataset):
             for item_dir in item_dirs:
                 contents = [i for i in item_dir.iterdir() if i.is_file() and not i.stem.startswith('.')]
                 if contents:
-                    temp_rgb = [i for i in contents if i.stem.startswith('rgb')
-                                and int(i.stem.split('_')[-1]) == sample_rate][0]
-                    temp_flow = [i for i in contents if i.stem.startswith('flow')
-                                 and int(i.stem.split('_')[-1]) == sample_rate][0]
+                    print(contents, sample_rate)
+                    try:
+                        temp_rgb = [i for i in contents if i.stem.startswith('rgb')
+                                    and int(i.stem.split('_')[-1]) == sample_rate][0]
+                        temp_flow = [i for i in contents if i.stem.startswith('flow')
+                                     and int(i.stem.split('_')[-1]) == sample_rate][0]
+                    except IndexError:
+                        raise IndexError("Please make sure you specified input sample rate right.")
                     self.data_pairs.append((temp_rgb, temp_flow, class_dict[sub_dir.stem]))
 
     def __len__(self):
