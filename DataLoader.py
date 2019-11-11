@@ -20,7 +20,7 @@ class RGBFlowDataset(Dataset):
             for item_dir in item_dirs:
                 contents = [i for i in item_dir.iterdir() if i.is_file() and not i.stem.startswith('.')]
                 if contents:
-                    print(contents, sample_rate)
+                    # print(contents, sample_rate)
                     try:
                         temp_rgb = [i for i in contents if i.stem.startswith('rgb')
                                     and int(i.stem.split('_')[-1]) == sample_rate][0]
@@ -36,4 +36,5 @@ class RGBFlowDataset(Dataset):
     def __getitem__(self, idx):
         rgb_data = np.load(self.data_pairs[idx][0]).transpose(3, 0, 1, 2)
         flow_data = np.load(self.data_pairs[idx][1]).transpose(3, 0, 1, 2)
+        # print("Flow: ", flow_data.shape, "Rgb: ", rgb_data.shape, self.data_pairs[idx][0], self.data_pairs[idx][-1])
         return np.float32(rgb_data), np.float32(flow_data), self.data_pairs[idx][2]

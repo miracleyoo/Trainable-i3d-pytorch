@@ -11,6 +11,11 @@ _IMAGE_EXT = ['.jpg', '.png']
 _IMAGE_SIZE = 224
 
 
+def split(a, n):
+    k, m = divmod(len(a), n)
+    return [a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in list(range(n))]
+
+
 class FrameGenerator(object):
     def __init__(self, input_path, sample_num=1, random_choice=False, chosen_frames=None):
         """
@@ -35,10 +40,11 @@ class FrameGenerator(object):
         self.counter = 0
         self.current_video_frame = -1
         self.sample_num = sample_num
-        self.skip_num = int(np.ceil(self.frame_num / self.sample_num))
+        # self.skip_num = int(np.ceil(self.frame_num / self.sample_num))
         # range(self.frame_num-1): Random choice shouldn't chooses the last frame, since flow need the next frame
-        self.full_frame_lists = [range(i, min(i + self.skip_num, self.frame_num))
-                                 for i in [j for j in range(self.frame_num-1) if j % self.skip_num == 0]]
+        # self.full_frame_lists = [range(i, min(i + self.skip_num, self.frame_num))
+        #                          for i in [j for j in range(self.frame_num-1) if j % self.skip_num == 0]]
+        self.full_frame_lists = split(list(range(self.frame_num-1)), self.sample_num)
 
         if chosen_frames is None:
             if random_choice:

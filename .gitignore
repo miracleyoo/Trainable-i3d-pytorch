@@ -9,6 +9,9 @@
 /data/images
 /data/backup
 
+*.DS_Store
+*._*
+
 *.lprof
 
 .cache
