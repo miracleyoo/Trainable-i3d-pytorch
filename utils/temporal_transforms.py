@@ -1,5 +1,6 @@
 import random
 import math
+import numpy as np
 
 
 class LoopPadding(object):
@@ -39,7 +40,7 @@ class TemporalBeginCrop(object):
                 break
             out.append(index)
 
-        return out
+        return np.float32(out)
 
 
 class TemporalCenterCrop(object):
@@ -74,7 +75,7 @@ class TemporalCenterCrop(object):
                 break
             out.append(index)
 
-        return out
+        return np.float32(out)
 
 
 class TemporalRandomCrop(object):
@@ -109,4 +110,4 @@ class TemporalRandomCrop(object):
                 break
             out.append(index)
 
-        return out
+        return np.float32(out)

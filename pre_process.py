@@ -3,7 +3,6 @@ import random
 import cv2
 import numpy as np
 
-from utils.spatial_transforms import Scale
 from utils.utils import *
 
 _VIDEO_EXT = ['.avi', '.mp4', '.mov']
@@ -40,7 +39,7 @@ def video_loader(video_path, short_size):
     else:
         fps = vidcap.get(cv2.CAP_PROP_FPS)
     success, image = vidcap.read()
-    video.append(resize_img(image,short_size))
+    video.append(resize_img(image, short_size))
     while success:
         success, image = vidcap.read()
         if not success: break
@@ -143,7 +142,7 @@ def get_video_generator(video_path, opts):
     else:
         raise ValueError("At least one of A and B is not None")
 
-    video_object = FrameGenerator(video_path, opts.sample_num, opts.random_choice, use_fps=(opts.sample_type=="fps"),
+    video_object = FrameGenerator(video_path, opts.sample_num, opts.random_choice, use_fps=(opts.sample_type == "fps"),
                                   resize=opts.resize, in_fps=opts.in_fps, out_fps=opts.out_fps)
     return video_object, out_path_dic
 
@@ -152,16 +151,17 @@ def compute_rgb(video_object, out_path):
     """Compute RGB"""
     rgb = []
 
-    for i in range(len(video_object)-1):
-        frame = video_object.get_frame()
-        # Kind of like the normalization
-        frame = (frame / 255.) * 2 - 1
-        rgb.append(frame)
-    # rgb = rgb[:-1]
-    rgb = np.float32(np.array(rgb))
+    # for i in range(len(video_object) - 1):
+    #     frame = video_object.get_frame()
+    #     # Kind of like the normalization
+    #     frame = (frame / 255.)# * 2 - 1
+    #     rgb.append(frame)
+    # # rgb = rgb[:-1]
+    # rgb = np.float32(np.array(rgb))
+
+    np.save(out_path["rgb"], video_object.frames[:-1])
     log('save rgb with shape ', rgb.shape)
-    np.save(out_path["rgb"], rgb)
-    return rgb, video_object.chosen_frames
+    return rgb
 
 
 def compute_flow(video_object, out_path):
@@ -184,18 +184,17 @@ def compute_flow(video_object, out_path):
 
         # digitize and scale to [-1;1]
         curr_flow = np.digitize(curr_flow, bins)
-        curr_flow = (curr_flow / 255.) * 2 - 1
+        # curr_flow = (curr_flow / 255.) * 2 - 1
 
         # Append this flow frame
         flow.append(curr_flow)
 
         prev = curr
 
-    flow = np.float32(np.array(flow))
-    log("Save flow with shape ", flow.shape)
-
+    flow = np.array(flow) #np.float32(
     np.save(out_path["flow"], flow)
-    return flow, video_object.chosen_frames
+    log("Save flow with shape ", flow.shape)
+    return flow
 
 
 def pre_process(video_path, opts):
@@ -236,7 +235,7 @@ def mass_process(opts):
 
 
 def main(opts):
-    pre_process(opts.video_path, opts)
+    pre_process(opts.input_path, opts)
 
 
 if __name__ == '__main__':
@@ -310,6 +309,7 @@ if __name__ == '__main__':
 
     if args.init_dir:
         build_data_path(args.is_image)
+        exit(0)
     if args.mass:
         mass_process(args)
     else:

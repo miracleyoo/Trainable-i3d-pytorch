@@ -6,9 +6,11 @@ import torch.optim as optim
 from torch.optim import lr_scheduler
 
 from src.i3dpt import Unit3Dpy
+from utils.temporal_transforms import TemporalRandomCrop
 from utils.utils import *
 from src.i3dpt import I3D
 from DataLoader import RGBFlowDataset
+from opts import parser
 
 
 def train_model(models, criterion, optimizers, schedulers, num_epochs=25):
@@ -155,7 +157,12 @@ if __name__ == "__main__":
     streams = ["rgb", "flow"]
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    rgb_flow_datasets = {x: RGBFlowDataset(data_dir / x, class_dicts, sample_rate=args.sample_rate)
+    rgb_flow_datasets = {x: RGBFlowDataset(data_dir / x, class_dicts,
+                                           sample_rate=args.sample_num,
+                                           sample_type=args.sample_type,
+                                           fps=args.out_fps,
+                                           out_frame_num=args.out_frame_num,
+                                           augment=(x == "train"))
                          for x in ['train', 'val']}
     data_loaders = {x: torch.utils.data.DataLoader(rgb_flow_datasets[x], batch_size=8,
                                                    shuffle=True, num_workers=0)

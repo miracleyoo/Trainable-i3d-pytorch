@@ -30,9 +30,9 @@ def log(*snippets, end=None):
 def build_data_path(is_image=False, data_root=None):
     if data_root is None:
         if is_image:
-            data_root = Path("data/images/")
+            data_root = Path("../data/images/")
         else:
-            data_root = Path("data/videos/")
+            data_root = Path("../data/videos/")
     raw_path = data_root / "raw"
     train_path = data_root / "pre-processed"
     if not train_path.exists(): train_path.mkdir()
@@ -50,9 +50,9 @@ def build_data_path(is_image=False, data_root=None):
 def sep_train_val(is_image=False, train_path=None, val_ratio=0.2):
     if train_path is None:
         if is_image:
-            train_path = "data/images/pre-processed/train"
+            train_path = "../data/images/pre-processed/train"
         else:
-            train_path = "data/videos/pre-processed/train"
+            train_path = "../data/videos/pre-processed/train"
     train_path = Path(train_path)
     class_parts = [i for i in train_path.iterdir() if not i.stem.startswith(".") and i.is_dir()]
     for class_part in class_parts:
@@ -67,9 +67,9 @@ def sep_train_val(is_image=False, train_path=None, val_ratio=0.2):
 def coalesce_train_val(is_image=False, val_path=None):
     if val_path is None:
         if is_image:
-            val_path = "data/images/pre-processed/val"
+            val_path = "../data/images/pre-processed/val"
         else:
-            val_path = "data/videos/pre-processed/val"
+            val_path = "../data/videos/pre-processed/val"
     val_path = Path(val_path)
     class_parts = [i for i in val_path.iterdir() if not i.stem.startswith(".") and i.is_dir()]
     for class_part in class_parts:

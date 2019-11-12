@@ -79,3 +79,9 @@ parser.add_argument(
     type=str,
     default='mini_toy_dataset',
     help='The session id of this training process.')
+
+parser.add_argument(
+    '--out_frame_num',
+    type=int,
+    default='32',
+    help='The number of frames sent to model finally.')
