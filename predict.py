@@ -1,9 +1,8 @@
 import torch
 import numpy as np
-from opts import parser
 from pre_process import pre_process
 from src.i3dpt import I3D
-from utils import *
+from utils.utils import *
 import os
 
 os.environ['KMP_DUPLICATE_LIB_OK']='True'

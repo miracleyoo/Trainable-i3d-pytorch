@@ -1,6 +1,4 @@
 import copy
-import os
-import time
 
 import torch
 import torch.nn as nn
@@ -8,9 +6,7 @@ import torch.optim as optim
 from torch.optim import lr_scheduler
 
 from src.i3dpt import Unit3Dpy
-from opts import parser
-from pathlib2 import Path
-from utils import *
+from utils.utils import *
 from src.i3dpt import I3D
 from DataLoader import RGBFlowDataset
 
@@ -146,6 +142,9 @@ def main():
 
     criterion = nn.CrossEntropyLoss()
     train_model(models, criterion, optimizers, exp_lr_schedulers, num_epochs=50)
+    for stream in streams:
+        temp_model_path = 'model/{}_model_{}.pth'.format(args.session_id, stream)
+        torch.save(models[stream].state_dict(), temp_model_path)
 
 
 if __name__ == "__main__":
