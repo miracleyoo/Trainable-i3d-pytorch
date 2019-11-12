@@ -202,7 +202,7 @@ def pre_process(video_path, opts):
         video_object, out_path_dic = get_video_generator(video_path, opts)
     with Timer('Compute RGB'):
         log('Extract RGB...')
-        rgb_data, chosen_frames = compute_rgb(video_object, out_path_dic)
+        rgb_data = compute_rgb(video_object, out_path_dic)
 
     video_object.reset()
     with Timer('Compute flow'):
