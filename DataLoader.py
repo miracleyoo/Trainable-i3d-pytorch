@@ -16,7 +16,7 @@ class SpacialTransform(Dataset):
     def refresh_random(self, image_np):
         # Random crop
         self.crop_dim = transforms.RandomCrop.get_params(
-            Image.fromarray(image_np), output_size=self.output_size)
+            Image.fromarray(image_np.astype('uint8')), output_size=self.output_size)
 
         # Random horizontal flipping
         self.horizontal_flip = False
@@ -36,7 +36,7 @@ class SpacialTransform(Dataset):
         # image_right = resize(image_right)
 
         for image_np in image_nps:
-            image_PIL = Image.fromarray(image_np)
+            image_PIL = Image.fromarray(image_np.astype('uint8'))
             image_PIL = TF.crop(image_PIL, *self.crop_dim)
             if self.horizontal_flip: image_PIL = TF.hflip(image_PIL)
             if self.vertical_flip: image_PIL = TF.vflip(image_PIL)
@@ -89,11 +89,14 @@ class RGBFlowDataset(Dataset):
     def __getitem__(self, idx):
         rgb_data = np.float32(np.load(self.data_pairs[idx][0]))
         self.spacial_transform.refresh_random(rgb_data[0])
-        rgb_data = rgb_data.transpose(3, 0, 1, 2)
+
         rgb_data = self.temporal_transform(rgb_data)
         rgb_data = self.spacial_transform.transform(rgb_data)
-        flow_data = np.float32(np.load(self.data_pairs[idx][1]).transpose(3, 0, 1, 2))
+        # print(rgb_data.shape)
+        rgb_data = rgb_data.permute(1,0,2,3)
+        flow_data = np.float32(np.load(self.data_pairs[idx][1]))
         flow_data = self.temporal_transform(flow_data)
         flow_data = self.spacial_transform.transform(flow_data)
+        flow_data = flow_data.permute(1,0,2,3)
         # print("Flow: ", flow_data.shape, "Rgb: ", rgb_data.shape, self.data_pairs[idx][0], self.data_pairs[idx][-1])
         return rgb_data, flow_data, self.data_pairs[idx][2]

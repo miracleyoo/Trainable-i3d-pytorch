@@ -75,7 +75,7 @@ def coalesce_train_val(is_image=False, val_path=None):
     for class_part in class_parts:
         data_temp = [i for i in class_part.iterdir() if not i.stem.startswith(".")]
         for data_path in data_temp:
-            new_path = Path(*data_path.parts[:-3], "train", *data_path.parts[-2:])
+            new_path = Path(*data_path.parts[:-3], "train", *data_path.parts[-2])
             log(str(data_path), "-->", str(new_path))
             shutil.move(str(data_path), str(new_path))
 
