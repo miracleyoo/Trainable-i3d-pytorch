@@ -149,8 +149,6 @@ def get_video_generator(video_path, opts):
 
 def compute_rgb(video_object, out_path):
     """Compute RGB"""
-    rgb = []
-
     # for i in range(len(video_object) - 1):
     #     frame = video_object.get_frame()
     #     # Kind of like the normalization
@@ -158,8 +156,8 @@ def compute_rgb(video_object, out_path):
     #     rgb.append(frame)
     # # rgb = rgb[:-1]
     # rgb = np.float32(np.array(rgb))
-
-    np.save(out_path["rgb"], video_object.frames[:-1])
+    rgb = np.array(video_object.frames[:-1])
+    np.save(out_path["rgb"], rgb)
     log('save rgb with shape ', rgb.shape)
     return rgb
 
@@ -191,7 +189,7 @@ def compute_flow(video_object, out_path):
 
         prev = curr
 
-    flow = np.array(flow) #np.float32(
+    flow = np.array(flow)  # np.float32(
     np.save(out_path["flow"], flow)
     log("Save flow with shape ", flow.shape)
     return flow
